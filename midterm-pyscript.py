@@ -1,9 +1,10 @@
 cv2_image = cv2.cvtColor(np.array(cam.raw_image), cv2.COLOR_RGB2HSV)
 cv2_image_RGB = cv2.cvtColor(cv2_image, cv2.COLOR_HSV2RGB)
+display(Image.fromarray(cv2_image_RGB))
 
 colors = ["red", "green"]
-mag = 90
-lower_bound = 50
+mag = 15
+lower_bound = 70
 color_one_count = 0
 color_two_count = 0
 for color in colors:
@@ -16,11 +17,9 @@ for color in colors:
         mask2 = cv2.inRange(cv2_image, lower_red2, upper_red2)
         mask = cv2.bitwise_or(mask1, mask2)
     if color == "green":
-        lower = np.array([60 - mag, lower_bound, lower_bound])
-        upper = np.array([60 + mag, 255, 255])
+        lower = np.array([60 - mag*2, lower_bound-10, lower_bound-10])
+        upper = np.array([60 + mag*2, 255, 255])
         mask = cv2.inRange(cv2_image, lower, upper)
-
-    display(Image.fromarray(cv2_image_RGB))
 
     kernel = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]], dtype=np.uint8)
     # display(Image.fromarray(mask))
@@ -33,10 +32,10 @@ for color in colors:
     masked = cv2.bitwise_and(cv2_image_RGB, cv2_image_RGB, mask=dilated)
     display(Image.fromarray(masked))
     count = np.count_nonzero(dilated)
-    print(count)
+    # print(count)
     if color == "red":
         color_one_count = count
-    if color == "green":
+    else:
         color_two_count = count
 
 new_val = "F" if color_one_count > color_two_count else "C"
@@ -65,7 +64,7 @@ async def patch_record(base_id, table_name, record_id, api_key):
         body=json.dumps(data),
     )
     result = await response.json()
-    print(result)
+    # print(result)
 
 
 api_key = 'patHUTHeOmbhBkd56.96a8e2afeea480d41aa27eeb9b01ee74afdd9476994d6219b82dbce8bd67ac73'
