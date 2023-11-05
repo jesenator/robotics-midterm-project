@@ -1,5 +1,7 @@
 # robotics-midterm-project
 
+https://jessegilbert.notion.site/Robotics-Midterm-Project-20ee8d3fe9b1408fa2358a6f8fc7ef9d?pvs=4
+
 ## Libraries used
 
 mqtt: A module for handling MQTT protocol communication, typically for IoT applications.
@@ -46,5 +48,3 @@ requests: A Python HTTP library for sending all kinds of HTTP requests.
 
 paho.mqtt.client: The specific client class from the Paho MQTT library, which enables communication with MQTT brokers.
 (written with help from ChatGPT)
-
-See my Notion page right up for more information: https://jessegilbert.notion.site/20ee8d3fe9b1408fa2358a6f8fc7ef9d?pvs=4
