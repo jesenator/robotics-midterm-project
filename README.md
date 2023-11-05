@@ -12,7 +12,7 @@ ubinascii: A module offering binary/ASCII conversions, commonly used for data en
 
 secrets: A user-defined module for storing and retrieving sensitive information like passwords or API keys.
 
-gamepad_test: Presumably a custom or specialized module for testing gamepad functionality and input events.
+gamepad_test: A module I wrote with basic setup and configuration of the I2C gamepad
 
 urequests: A MicroPython library for making HTTP requests from small microcontrollers.
 
@@ -41,8 +41,6 @@ cv2: The OpenCV library for Python, which provides tools for computer vision and
 base64: A module for encoding binary data into ASCII characters and decoding it back.
 
 numpy: A library for numerical computing in Python, providing support for arrays, matrices, and high-level mathematical functions.
-
-np: A common alias for the numpy library.
 
 requests: A Python HTTP library for sending all kinds of HTTP requests.
 
