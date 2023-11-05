@@ -5,9 +5,7 @@ import time
 import json
 name_text = ""
 
-base_id = 'appiqDH9yo5f9lCwC'
-table_name = 'tblzIa6NVYGyQBPdr'
-record_id = 'rec4JEibPBPPGQJI6'
+
 
 # Headers to authenticate
 headers = {
