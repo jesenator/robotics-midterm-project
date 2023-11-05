@@ -70,7 +70,10 @@ def sControl(cent):
 
 
 def update_display(val, is_celsius):
-    fan_servo.duty_u16(sControl(val))
+    print(val)
+    fan_speed = num_to_range(val, 20, 27, 0, 100)
+    fan_servo.duty_u16(sControl(fan_speed))
+    print(fan_speed)
     if is_celsius:
         cel_pin.on()
         far_pin.off()
@@ -158,7 +161,7 @@ while True:
     print("getting temp")
     Tc = get_temp()
     temp = Tc if is_celsius else int((Tc * 9.0) / 5.0 + 32.0)
-    update_display(Tc, is_celsiusx)
+    update_display(Tc, is_celsius)
     
     if time.ticks_ms() > next_read_time or airtable_updated:
         print("publishing")
