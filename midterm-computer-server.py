@@ -5,7 +5,6 @@ import time
 import json
 name_text = ""
 
-api_key = 'patHUTHeOmbhBkd56.96a8e2afeea480d41aa27eeb9b01ee74afdd9476994d6219b82dbce8bd67ac73'
 base_id = 'appiqDH9yo5f9lCwC'
 table_name = 'tblzIa6NVYGyQBPdr'
 record_id = 'rec4JEibPBPPGQJI6'
