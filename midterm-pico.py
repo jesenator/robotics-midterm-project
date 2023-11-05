@@ -4,6 +4,20 @@ import time
 import network, ubinascii
 from secrets import Tufts_Wireless as wifi
 import gamepad_test
+import urequests
+from machine import Pin, PWM, I2C, ADC
+import math
+
+fan_servo = PWM(Pin(15))
+fan_servo.freq(50)
+high_pin = Pin(26, Pin.OUT)
+high_pin.on()
+thermistor_pin = Pin(27, Pin.IN)
+thermistor = ADC(thermistor_pin)
+cel_pin = Pin(19, Pin.OUT)
+far_pin = Pin(20, Pin.OUT)
+
+
 
 
 def connect_wifi(wifi):
@@ -25,19 +39,49 @@ def connect_wifi(wifi):
 #     else:
 #         print("Failed to connect, return code %d\n", rc)
 
+def num_to_range(num, inMin, inMax, outMin, outMax):
+  return outMin + (float(num - inMin) / float(inMax - inMin) * (outMax
+                  - outMin))
+
 
 def get_temp():
-    return 30
+    resist = 1000
+    c1 = 1.009249522e-03
+    c2 = 2.378405444e-04
+    c3 = 2.019202697e-07
+    #thermistor_resist = 10000 #10k ohms
+    
+    val = thermistor.read_u16()
+    val = resist * (65535.0/float(val) - 1.0)
+    log_val = math.log(val)
+    Tc = (1.0 / (c1 + c2*log_val + c3*log_val*log_val*log_val))
+    Tc = Tc - 273.15
+    adjustment = 70
+    Tc = Tc - adjustment
+    #print("         " + str(val))
+    #val = num_to_range(val, 30000, 36000, 20, 60)
+    #print(Tc)
+    time.sleep(.1)
+    return int(Tc)
 
 
-def update_display(val):
-    pass
+def sControl(cent):
+    return int((float(cent) / 100) * 1800 + 4800)
 
+
+def update_display(val, is_celsius):
+    fan_servo.duty_u16(sControl(val))
+    if is_celsius:
+        cel_pin.on()
+        far_pin.off()
+    else:
+        far_pin.on()
+        cel_pin.off()
 
 def set_up_mqtt():
     broker_address = "io.adafruit.com"
     username = "jesenator"
-    password = "-------"
+    password = "aio_ZFgK47lz10pWABk7G1KWVvIaJ7hr"
     client_name = "pico client"
     # client = mqtt.Client(client_name)
     # client.on_connect = on_connect
@@ -45,6 +89,9 @@ def set_up_mqtt():
     # client.connect(broker_address, 1883)
 
     fred = mqtt.MQTTClient(client_name, broker_address, user=username, password=password, keepalive=1000)
+    fred.connect()
+    print("mqtt connected")
+
     return fred
 
 
@@ -59,38 +106,75 @@ def read_i2c_device(last_x, last_y, last_btn):
         if (btn != last):  # if it has changed
             print(name)
             new_button_val = True
-    if new_joystick_val or new_button_val:
-        msg = '%d %d %d %d %d %d' % (x, y, buttons[0], buttons[1], buttons[2], buttons[3])
-        print(msg)
-    return x, y, buttons
+    is_new = new_joystick_val or new_button_val
+    return is_new, x, y, buttons
 
 
 def read_airtable():
-    val = ""
-    return val
+    api_key = 'patHUTHeOmbhBkd56.96a8e2afeea480d41aa27eeb9b01ee74afdd9476994d6219b82dbce8bd67ac73'
+    base_id = 'appiqDH9yo5f9lCwC'
+    table_name = 'tblzIa6NVYGyQBPdr'
+    record_id = 'rec4JEibPBPPGQJI6'
+
+    # Headers to authenticate
+    headers = {
+        'Authorization': f'Bearer {api_key}',
+        'Content-Type': 'application/json'
+    }
+
+    endpoint = f'https://api.airtable.com/v0/{base_id}/{table_name}'
+    response = urequests.get(endpoint, headers=headers)
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the response as JSON
+        records = response.json().get('records', [])
+        for record in records:
+            id = record['id']
+            name_text = record['fields']['Name']
+    else:
+        print(f'Error: {response.status_code}')
+
+    return name_text
 
 
 connect_wifi(wifi)
 client = set_up_mqtt()
-client.loop_start()
-next_read_time = time.ticks_ms() + 5 * 60 * 1000
+mins_till_next_read = 1
+next_read_time = time.ticks_ms() + mins_till_next_read * 60 * 1000
 airtable_updated = False
 new_val, old_val = "", ""
-last_x, last_y, last_btn = 0, 0, [False] * len(gamepad_test.BTN_CONST)
+x, y, buttons = 0, 0, [False] * len(gamepad_test.BTN_CONST)
+temp = 0
+is_celsius = True
 
 while True:
-    if time.ticks_ms > next_read_time or airtable_updated:
-        temp = get_temp()
-        print("publishing")
-        client.publish("jesenator/feeds/temp", temp)
-        update_display(temp)
-        time.sleep(3)
-
-    (last_x, last_y, last_btn) = read_i2c_device(last_x, last_y, last_btn)
+    (is_new, x, y, buttons) = read_i2c_device(x, y, buttons)
+    
     new_val = read_airtable()
-
     airtable_updated = (new_val != old_val)
     old_val = new_val
+    is_celsius = (new_val == "C")
+    
+    print("getting temp")
+    Tc = get_temp()
+    temp = Tc if is_celsius else int((Tc * 9.0) / 5.0 + 32.0)
+    update_display(Tc, is_celsiusx)
+    
+    if time.ticks_ms() > next_read_time or airtable_updated:
+        print("publishing")
+        temp = Tc if is_celsius else int((Tc * 9.0) / 5.0 + 32.0)
+        client.publish("jesenator/feeds/temp", str(temp))
 
-client.loop_stop()
+        next_read_time = time.ticks_ms() + mins_till_next_read * 60 * 1000
+
+    
+    debug = True
+    if debug:
+        print('gamepad values: %d %d %d %d %d %d' % (x, y, buttons[0], buttons[1], buttons[2], buttons[3]))
+        print(f'airtable val: {new_val}')
+        print(f'temp val: {temp}')
+        print("========")
+    time.sleep(.2)
+
 client.disconnect()
+
