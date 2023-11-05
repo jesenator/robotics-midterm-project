@@ -37,7 +37,7 @@ def update_display(val):
 def set_up_mqtt():
     broker_address = "io.adafruit.com"
     username = "jesenator"
-    password = "aio_XvMJ50ILhQ9hsmgyD53CP598XWjc"
+    password = "-------"
     client_name = "pico client"
     # client = mqtt.Client(client_name)
     # client.on_connect = on_connect
