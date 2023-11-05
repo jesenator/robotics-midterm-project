@@ -1,6 +1,6 @@
 # robotics-midterm-project
 
-https://jessegilbert.notion.site/Robotics-Midterm-Project-20ee8d3fe9b1408fa2358a6f8fc7ef9d?pvs=4
+See my Notion page right up for more information: https://jessegilbert.notion.site/20ee8d3fe9b1408fa2358a6f8fc7ef9d?pvs=4
 
 ## Libraries used
 
