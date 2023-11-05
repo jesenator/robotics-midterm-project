@@ -69,17 +69,21 @@ def sControl(cent):
     return int((float(cent) / 100) * 1800 + 4800)
 
 
-def update_display(val, is_celsius):
-    print(val)
-    fan_speed = num_to_range(val, 20, 27, 0, 100)
-    fan_servo.duty_u16(sControl(fan_speed))
-    print(fan_speed)
-    if is_celsius:
+def toggle_leds(toggle):
+    if toggle:
         cel_pin.on()
         far_pin.off()
     else:
         far_pin.on()
         cel_pin.off()
+
+def update_display(val, is_celsius, fan_on):
+    print(val)
+    fan_speed = num_to_range(val, 20, 33, 0, -100)
+    fan_servo.duty_u16(sControl(fan_speed if fan_on else 0))
+    print(fan_speed)
+    toggle_leds(is_celsius)
+
 
 def set_up_mqtt():
     broker_address = "io.adafruit.com"
@@ -149,10 +153,22 @@ new_val, old_val = "", ""
 x, y, buttons = 0, 0, [False] * len(gamepad_test.BTN_CONST)
 temp = 0
 is_celsius = True
+party_mode = False
+fan_on = True
+toggle = True
 
 while True:
     (is_new, x, y, buttons) = read_i2c_device(x, y, buttons)
-    
+    if buttons[0] == 1: #up
+        party_mode = True
+    if buttons[3] == 1: #down
+        party_mode = False
+    if buttons[2] == 1: #right
+        fan_on = True
+    if buttons[1] == 1: #left
+        fan_on = False
+
+
     new_val = read_airtable()
     airtable_updated = (new_val != old_val)
     old_val = new_val
@@ -161,7 +177,14 @@ while True:
     print("getting temp")
     Tc = get_temp()
     temp = Tc if is_celsius else int((Tc * 9.0) / 5.0 + 32.0)
-    update_display(Tc, is_celsius)
+    
+    if party_mode:
+        toggle_leds(toggle)
+        toggle = not toggle
+        fan_servo.duty_u16(sControl(-100 if toggle else 100))
+    else:
+
+        update_display(Tc, is_celsius, fan_on)
     
     if time.ticks_ms() > next_read_time or airtable_updated:
         print("publishing")
@@ -173,10 +196,12 @@ while True:
     
     debug = True
     if debug:
+        print(f'fan          : {"on" if fan_on else "off"}')
+        print(f'party mode   : {"on" if party_mode else "off"}')
         print('gamepad values: %d %d %d %d %d %d' % (x, y, buttons[0], buttons[1], buttons[2], buttons[3]))
-        print(f'airtable val: {new_val}')
-        print(f'temp val: {temp}')
-        print("========")
+        print(f'airtable val : {new_val}')
+        print(f'temp val     : {temp}')
+        print("========================")
     time.sleep(.2)
 
 client.disconnect()
