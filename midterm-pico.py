@@ -88,7 +88,7 @@ def update_display(val, is_celsius, fan_on):
 def set_up_mqtt():
     broker_address = "io.adafruit.com"
     username = "jesenator"
-    password = "aio_ZFgK47lz10pWABk7G1KWVvIaJ7hr"
+    password = ""
     client_name = "pico client"
     # client = mqtt.Client(client_name)
     # client.on_connect = on_connect
@@ -118,7 +118,7 @@ def read_i2c_device(last_x, last_y, last_btn):
 
 
 def read_airtable():
-    api_key = 'patHUTHeOmbhBkd56.96a8e2afeea480d41aa27eeb9b01ee74afdd9476994d6219b82dbce8bd67ac73'
+    api_key = ''
     base_id = 'appiqDH9yo5f9lCwC'
     table_name = 'tblzIa6NVYGyQBPdr'
     record_id = 'rec4JEibPBPPGQJI6'
