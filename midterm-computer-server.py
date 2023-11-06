@@ -5,7 +5,7 @@ import time
 import json
 name_text = ""
 
-api_key = 'patHUTHeOmbhBkd56.96a8e2afeea480d41aa27eeb9b01ee74afdd9476994d6219b82dbce8bd67ac73'
+api_key = ''
 base_id = 'appiqDH9yo5f9lCwC'
 table_name = 'tblzIa6NVYGyQBPdr'
 record_id = 'rec4JEibPBPPGQJI6'
@@ -29,7 +29,7 @@ broker_address = "io.adafruit.com"
 client = mqtt.Client("pycharm server")
 client.on_connect = on_connect
 
-client.username_pw_set("jesenator", "aio_ZFgK47lz10pWABk7G1KWVvIaJ7hr")
+client.username_pw_set("jesenator", "")
 client.connect(broker_address, 1883)
 
 client.loop_start()
