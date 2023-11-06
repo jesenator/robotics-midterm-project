@@ -5,7 +5,10 @@ import time
 import json
 name_text = ""
 
-
+api_key = 'patHUTHeOmbhBkd56.96a8e2afeea480d41aa27eeb9b01ee74afdd9476994d6219b82dbce8bd67ac73'
+base_id = 'appiqDH9yo5f9lCwC'
+table_name = 'tblzIa6NVYGyQBPdr'
+record_id = 'rec4JEibPBPPGQJI6'
 
 # Headers to authenticate
 headers = {
@@ -26,7 +29,7 @@ broker_address = "io.adafruit.com"
 client = mqtt.Client("pycharm server")
 client.on_connect = on_connect
 
-client.username_pw_set("jesenator", "aio_XvMJ50ILhQ9hsmgyD53CP598XWjc")
+client.username_pw_set("jesenator", "aio_ZFgK47lz10pWABk7G1KWVvIaJ7hr")
 client.connect(broker_address, 1883)
 
 client.loop_start()
@@ -51,22 +54,3 @@ while True:
 
 client.loop_stop()
 client.disconnect()
-
-
-
-# #################### updating record name
-# endpoint = f'https://api.airtable.com/v0/{base_id}/{table_name}/{record_id}'
-#
-# data = {
-#     "fields": {
-#         "Name": "Ferry Building",
-#     },
-# }
-# response = requests.patch(endpoint, headers=headers, data=json.dumps(data))
-# if response.status_code == 200:
-#     print('Successfully updated the record.')
-#     updated_record = response.json()
-#     print(json.dumps(updated_record, indent=4))
-# else:
-#     print(f'Failed to update the record: {response.status_code}')
-#     print(response.json())
