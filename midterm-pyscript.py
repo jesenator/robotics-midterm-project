@@ -67,7 +67,7 @@ async def patch_record(base_id, table_name, record_id, api_key):
     # print(result)
 
 
-api_key = 'patHUTHeOmbhBkd56.96a8e2afeea480d41aa27eeb9b01ee74afdd9476994d6219b82dbce8bd67ac73'
+api_key = ''
 base_id = 'appiqDH9yo5f9lCwC'
 table_name = 'tblzIa6NVYGyQBPdr'
 record_id = 'rec4JEibPBPPGQJI6'
