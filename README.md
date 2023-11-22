@@ -47,4 +47,6 @@ numpy: A library for numerical computing in Python, providing support for arrays
 requests: A Python HTTP library for sending all kinds of HTTP requests.
 
 paho.mqtt.client: The specific client class from the Paho MQTT library, which enables communication with MQTT brokers.
+
+
 (written with help from ChatGPT)
